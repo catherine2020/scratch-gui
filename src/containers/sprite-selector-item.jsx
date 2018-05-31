@@ -34,7 +34,11 @@ class SpriteSelectorItem extends React.Component {
         this.props.onDrag({
             img: null,
             currentOffset: null,
-            dragging: false
+            dragging: false,
+            id: null
+        });
+        setTimeout(() => {
+            this.noClick = false;
         });
     }
     handleMouseMove (e) {
@@ -45,8 +49,10 @@ class SpriteSelectorItem extends React.Component {
             this.props.onDrag({
                 img: this.props.costumeURL,
                 currentOffset: currentOffset,
-                dragging: true
+                dragging: true,
+                id: this.props.id
             });
+            this.noClick = true;
         }
         e.preventDefault();
     }
@@ -59,7 +65,9 @@ class SpriteSelectorItem extends React.Component {
     }
     handleClick (e) {
         e.preventDefault();
-        this.props.onClick(this.props.id);
+        if (!this.noClick) {
+            this.props.onClick(this.props.id);
+        }
     }
     handleDelete (e) {
         e.stopPropagation(); // To prevent from bubbling back to handleClick

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-
+import classNames from 'classnames';
 import SpriteSelectorItem from '../../containers/sprite-selector-item.jsx';
 
 import Box from '../box/box.jsx';
@@ -12,6 +12,10 @@ const Selector = props => {
         buttons,
         items,
         selectedItemIndex,
+        refFactory,
+        dragging,
+        draggingId,
+        mouseOverIndex,
         onDeleteClick,
         onDuplicateClick,
         onItemClick
@@ -38,20 +42,31 @@ const Selector = props => {
         <Box className={styles.wrapper}>
             <Box className={styles.listArea}>
                 {items.map((item, index) => (
-                    <SpriteSelectorItem
-                        assetId={item.assetId}
-                        className={styles.listItem}
-                        costumeURL={item.url}
-                        details={item.details}
-                        id={index}
+                    <div
+                        className={classNames(styles.itemWrapper, {
+                            [styles.dragging]: dragging && index === mouseOverIndex
+                        })}
                         key={`asset-${index}`}
-                        name={item.name}
-                        number={index + 1 /* 1-indexed */}
-                        selected={index === selectedItemIndex}
-                        onClick={onItemClick}
-                        onDeleteButtonClick={onDeleteClick}
-                        onDuplicateButtonClick={onDuplicateClick}
-                    />
+                        ref={refFactory(index)}
+                        style={{
+                            order: index
+                        }}
+                    >
+                        <SpriteSelectorItem
+                            assetId={item.assetId}
+                            className={styles.listItem}
+                            costumeURL={item.url}
+                            details={item.details}
+                            id={index}
+                            key={`asset-${item.assetId}`}
+                            name={item.name}
+                            number={index + 1 /* 1-indexed */}
+                            selected={index === selectedItemIndex}
+                            onClick={onItemClick}
+                            onDeleteButtonClick={onDeleteClick}
+                            onDuplicateButtonClick={onDuplicateClick}
+                        />
+                    </div>
                 ))}
             </Box>
             {newButtonSection}

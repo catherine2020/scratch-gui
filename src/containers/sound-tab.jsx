@@ -38,6 +38,7 @@ class SoundTab extends React.Component {
             'handleSurpriseSound',
             'handleFileUploadClick',
             'handleSoundUpload',
+            'handleReorder',
             'setFileInput'
         ]);
         this.state = {selectedSoundIndex: 0};
@@ -117,6 +118,27 @@ class SoundTab extends React.Component {
         });
     }
 
+    handleReorder (soundIndex, newIndex) {
+        if (!this.props.vm.editingTarget) {
+            return null;
+        }
+
+        let sprite = this.props.vm.editingTarget.sprite;
+        let sounds = sprite.sounds ? sprite.sounds : [];
+        const activeSoundId = sounds[this.state.selectedSoundIndex].soundId;
+        this.activeSoundId = activeSoundId;
+
+        this.props.vm.reorderSound(this.props.vm.editingTarget.id,
+            soundIndex, newIndex);
+
+        sprite = this.props.vm.editingTarget.sprite;
+        sounds = sprite.sounds ? sprite.sounds : [];
+        for (let n = 0; n < sounds.length; n++) {
+            if (sounds[n].soundId === activeSoundId) {
+                this.setState({selectedSoundIndex: n});
+            }
+        }
+    }
     setFileInput (input) {
         this.fileInput = input;
     }
@@ -196,6 +218,7 @@ class SoundTab extends React.Component {
                 onDeleteClick={this.handleDeleteSound}
                 onDuplicateClick={this.handleDuplicateSound}
                 onItemClick={this.handleSelectSound}
+                onReorder={this.handleReorder}
             >
                 {sprite.sounds && sprite.sounds[this.state.selectedSoundIndex] ? (
                     <SoundEditor soundIndex={this.state.selectedSoundIndex} />

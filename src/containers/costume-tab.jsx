@@ -84,6 +84,7 @@ class CostumeTab extends React.Component {
             'handleFileUploadClick',
             'handleCostumeUpload',
             'handleCameraBuffer',
+            'handleReorder',
             'setFileInput'
         ]);
         const {
@@ -192,6 +193,26 @@ class CostumeTab extends React.Component {
     handleFileUploadClick () {
         this.fileInput.click();
     }
+    handleReorder (costumeIndex, newIndex) {
+        if (!this.props.vm.editingTarget) {
+            return null;
+        }
+
+        let sprite = this.props.vm.editingTarget.sprite;
+        let costumes = sprite.costumes ? sprite.costumes : [];
+        const activeCostumeId = costumes[this.state.selectedCostumeIndex].skinId;
+
+        this.props.vm.reorderCostume(this.props.vm.editingTarget.id,
+            costumeIndex, newIndex);
+
+        sprite = this.props.vm.editingTarget.sprite;
+        costumes = sprite.costumes ? sprite.costumes : [];
+        for (let n = 0; n < costumes.length; n++) {
+            if (costumes[n].skinId === activeCostumeId) {
+                this.setState({selectedCostumeIndex: n});
+            }
+        }
+    }
     setFileInput (input) {
         this.fileInput = input;
     }
@@ -233,11 +254,12 @@ class CostumeTab extends React.Component {
         const addLibraryFunc = target.isStage ? onNewLibraryBackdropClick : onNewLibraryCostumeClick;
         const addLibraryIcon = target.isStage ? addLibraryBackdropIcon : addLibraryCostumeIcon;
 
-        const costumeData = (target.costumes || []).map(costume => ({
+        const sprite = vm.editingTarget.sprite;
+        const costumeData = sprite.costumes ? sprite.costumes.map(costume => ({
             name: costume.name,
             assetId: costume.assetId,
             details: costume.size ? this.formatCostumeDetails(costume.size, costume.bitmapResolution) : null
-        }));
+        })) : [];
 
         return (
             <AssetPanel
@@ -277,6 +299,7 @@ class CostumeTab extends React.Component {
                     this.handleDeleteCostume : null}
                 onDuplicateClick={this.handleDuplicateCostume}
                 onItemClick={this.handleSelectCostume}
+                onReorder={this.handleReorder}
             >
                 {target.costumes ?
                     <PaintEditorWrapper
