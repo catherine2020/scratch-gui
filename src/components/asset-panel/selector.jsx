@@ -14,7 +14,6 @@ const Selector = props => {
         selectedItemIndex,
         refFactory,
         dragging,
-        draggingId,
         mouseOverIndex,
         onDeleteClick,
         onDuplicateClick,
@@ -80,13 +79,16 @@ Selector.propTypes = {
         img: PropTypes.string.isRequired,
         onClick: PropTypes.func
     })),
+    dragging: PropTypes.bool,
     items: PropTypes.arrayOf(PropTypes.shape({
         url: PropTypes.string,
         name: PropTypes.string.isRequired
     })),
+    mouseOverIndex: PropTypes.number,
     onDeleteClick: PropTypes.func,
     onDuplicateClick: PropTypes.func,
     onItemClick: PropTypes.func.isRequired,
+    refFactory: PropTypes.func,
     selectedItemIndex: PropTypes.number.isRequired
 };
 

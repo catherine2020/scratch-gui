@@ -10,32 +10,13 @@ class Selector extends React.Component {
         super(props);
         bindAll(this, [
             'refFactory'
-            // 'handleBack',
-            // 'handleCancel',
-            // 'handleCapture',
-            // 'handleLoaded',
-            // 'handleSubmit',
-            // 'setCanvas'
         ]);
 
         this.elements = [];
         this.boxes = null;
-
-        this.state = {
-            // capture: null,
-            // access: false,
-            // loaded: false
-        };
-    }
-    refFactory (index) {
-        return el => {
-            // console.log(`setting ref ${index} to ${el}`);
-            this.elements[index] = el;
-        };
     }
     componentWillReceiveProps (newProps) {
         if (newProps.dragging && !this.props.dragging) {
-            // console.log('resetting boxes');
             this.boxes = this.elements.map(el => el && el.getBoundingClientRect());
         }
         if (!newProps.dragging && this.props.dragging) {
@@ -43,12 +24,16 @@ class Selector extends React.Component {
             this.props.onReorder(this.props.draggingId, this.mouseOverIndex);
         }
     }
+    refFactory (index) {
+        return el => {
+            this.elements[index] = el;
+        };
+    }
     render () {
         let mouseOverIndex = null;
         let items = this.props.items;
 
         if (this.props.currentOffset) {
-            // console.log(midpoints, this.props.currentOffset.y);
             mouseOverIndex = this.boxes.length;
             for (let n = 0; n < this.boxes.length; n++) {
                 const box = this.boxes[n];
@@ -63,14 +48,6 @@ class Selector extends React.Component {
             items = items.slice(0, this.props.draggingId).concat(items.slice(this.props.draggingId + 1));
             items.splice(this.mouseOverIndex, 0, this.props.items[this.props.draggingId]);
         }
-
-        // if (this.dragging) {
-        //     items = items.slice(0, this.props.draggingId).concat(items.slice(this.props.draggingId + 1));
-        //     console.log(this.props.items.map(i => i.name), items.map(i => i.name));
-        //     items.splice(this.mouseOverIndex, 0, this.props.items[this.draggingId]);
-        //     console.log(this.props.items.map(i => i.name), items.map(i => i.name));
-        // }
-        // console.log(this.props.draggingId, this.mouseOverIndex, this.props.items.map(i => i.name), items.map(i => i.name));
         return (
             <SelectorComponent
                 mouseOverIndex={this.mouseOverIndex}
@@ -83,8 +60,18 @@ class Selector extends React.Component {
 }
 
 Selector.propTypes = {
+    currentOffset: PropTypes.shape({
+        x: PropTypes.number,
+        y: PropTypes.number
+    }),
+    dragging: PropTypes.bool,
+    draggingId: PropTypes.number,
+    items: PropTypes.arrayOf(PropTypes.shape({
+        url: PropTypes.string,
+        name: PropTypes.string.isRequired
+    })),
     onClose: PropTypes.func,
-    onNewCostume: PropTypes.func
+    onReorder: PropTypes.func
 };
 
 const mapStateToProps = state => ({
@@ -94,11 +81,7 @@ const mapStateToProps = state => ({
     vm: state.scratchGui.vm
 });
 
-const mapDispatchToProps = dispatch => ({
-    onClose: () => {
-        // dispatch(closeCameraCapture());
-    }
-});
+const mapDispatchToProps = () => ({});
 
 export default connect(
     mapStateToProps,
